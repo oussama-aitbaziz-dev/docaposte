@@ -10,10 +10,12 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 
+import CustomInput from "./components/CustomInput";
+
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-import { login } from "../utils";
+import { login } from "../../utils";
 
 const Login = () => {
   const form = useFormik({
@@ -55,34 +57,8 @@ const Login = () => {
           noValidate
           sx={{ mt: 1 }}
         >
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-            onChange={form.handleChange}
-            value={form.values.email}
-            error={errors.email && touched.email}
-            helperText={errors.email ?? ""}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            onChange={form.handleChange}
-            value={form.values.password}
-            error={errors.password && touched.password}
-            helperText={errors.password ?? ""}
-          />
+          <CustomInput form={form} type="email" label="Email" />
+          <CustomInput form={form} type="password" label="Passowrd" />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
