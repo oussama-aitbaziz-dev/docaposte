@@ -23,7 +23,6 @@ const Login = () => {
       password: Yup.string().required("Champ requis"),
     }),
     onSubmit: ({ rememberMe }) => {
-      alert(JSON.stringify(rememberMe, null, 2));
       login(rememberMe);
     },
   });

@@ -3,7 +3,7 @@ import axios from "axios";
 import config from "../config";
 import apiRoutesList from "./apiRoutesList";
 
-const apiInstance = () => {
+const create = () => {
   const headers = {
     "Content-Type": "application/json",
   };
@@ -32,5 +32,7 @@ const apiInstance = () => {
 
   return { getUsers, createUser, updateUser, deleteUser };
 };
+
+const apiInstance = create();
 
 export default apiInstance;

@@ -12,6 +12,7 @@ const CustomInput = ({ form, type, label }) => {
       label={label}
       name={type}
       autoComplete={type}
+      type={type}
       onChange={form.handleChange}
       value={form.values[type]}
       error={form.errors[type] && form.touched[type]}
