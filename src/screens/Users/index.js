@@ -1,66 +1,54 @@
 import { useEffect, useState } from "react";
 
-import { Button, CircularProgress, Container } from "@mui/material";
-import { Box } from "@mui/system";
 import {
-  DataGridPro,
-  GridToolbarContainer,
-  GridActionsCellItem,
-} from "@mui/x-data-grid-pro";
-import AddIcon from "@mui/icons-material/Add";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/DeleteOutlined";
+  Alert,
+  Button,
+  CircularProgress,
+  Container,
+  Snackbar,
+} from "@mui/material";
+import { Box } from "@mui/system";
+
+import DeleteUserDialog from "./components/DeleteUserDialog";
 
 import api from "../../services";
 import { logout } from "../../utils";
+import UsersTable from "./components/UsersTable";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleUserEdit = (id) => {
-    console.log("handleUserUpdate", id);
+  const [selectedRowData, setSelectedRowData] = useState({});
+
+  // Delete User Dialog State
+  const [open, setOpen] = useState(false);
+
+  // Snackbar State
+  const [showSnackbar, setShowSnackbar] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState(false);
+
+  // Handlers
+  const toggleDialog = () => {
+    setOpen(!open);
   };
-  const handleUserDelete = (id) => {
-    console.log("handleUserDelete", id);
-  };
-  const handleAddUser = () => {
-    console.log("handleAddUser");
+  const toggleSnackbar = () => {
+    setShowSnackbar(!showSnackbar);
   };
 
-  const columns = [
-    { field: "firstName", headerName: "Prénom", width: 130 },
-    { field: "lastName", headerName: "Nom", width: 130 },
-    { field: "email", headerName: "Email", width: 250 },
-    {
-      field: "actions",
-      type: "actions",
-      headerName: "Actions",
-      width: 100,
-      getActions: ({ id }) => {
-        return [
-          <GridActionsCellItem
-            icon={<EditIcon />}
-            label="Edit"
-            color="inherit"
-            onClick={() => {
-              handleUserEdit(id);
-            }}
-          />,
-          <GridActionsCellItem
-            icon={<DeleteIcon />}
-            label="Delete"
-            color="inherit"
-            onClick={() => {
-              handleUserDelete(id);
-            }}
-          />,
-        ];
-      },
-    },
-  ];
+  const handleAddUser = () => {};
 
+  const handleEditUser = (data) => {
+    setSelectedRowData(data);
+  };
+
+  const handleDeleteUser = (data) => {
+    setSelectedRowData(data);
+    toggleDialog();
+  };
+
+  // Get all users
   useEffect(() => {
     const fetch = async () => {
       setLoading(true);
@@ -68,7 +56,9 @@ const Users = () => {
         const users = await api.getUsers();
         if (users?.data?.length) setUsers(users.data);
       } catch (error) {
-        setError("Une erreur inattendue est survenue");
+        setError(
+          "Une erreur du serveur est survenue, veuillez réessayer plus tard."
+        );
       } finally {
         setLoading(false);
       }
@@ -77,18 +67,25 @@ const Users = () => {
     fetch();
   }, []);
 
-  const EditToolbar = () => {
-    return (
-      <GridToolbarContainer onClick={handleAddUser}>
-        <Button color="primary" startIcon={<AddIcon />}>
-          Ajouter un utilisateur
-        </Button>
-      </GridToolbarContainer>
-    );
-  };
-
   return (
     <Container component="main" maxWidth="md" sx={{ marginTop: "2rem" }}>
+      <DeleteUserDialog
+        data={selectedRowData}
+        open={open}
+        toggleDialog={toggleDialog}
+        setUsers={setUsers}
+        toggleSnackbar={toggleSnackbar}
+        setSnackbarMsg={setSnackbarMsg}
+      />
+      <Snackbar
+        open={showSnackbar}
+        autoHideDuration={3000}
+        onClose={() => {
+          toggleSnackbar();
+          setSnackbarMsg("");
+        }}
+        message={snackbarMsg}
+      />
       <Button
         variant="text"
         onClick={() => {
@@ -105,19 +102,20 @@ const Users = () => {
           alignItems: "center",
         }}
       >
+        {error && (
+          <Alert severity="error" sx={{ margin: "2rem 0" }}>
+            {error}
+          </Alert>
+        )}
         {loading ? (
           <CircularProgress />
         ) : (
-          <div style={{ height: 400, width: "100%" }}>
-            <DataGridPro
-              rows={users}
-              columns={columns}
-              components={{
-                Toolbar: EditToolbar,
-              }}
-              hideFooter
-            />
-          </div>
+          <UsersTable
+            users={users}
+            handleAddUser={handleAddUser}
+            handleEditUser={handleEditUser}
+            handleDeleteUser={handleDeleteUser}
+          />
         )}
       </Box>
     </Container>

@@ -27,7 +27,7 @@ const create = () => {
   };
 
   const deleteUser = ({ id }) => {
-    return api.delete(`${apiRoutesList.users}/:${id}`);
+    return api.delete(`${apiRoutesList.users}/${id}`);
   };
 
   return { getUsers, createUser, updateUser, deleteUser };
