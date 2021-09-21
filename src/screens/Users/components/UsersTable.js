@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { Button } from "@mui/material";
 import {
   DataGridPro,
@@ -71,3 +72,10 @@ const UsersTable = ({
 };
 
 export default UsersTable;
+
+UsersTable.propTypes = {
+  users: PropTypes.array,
+  handleAddUser: PropTypes.func,
+  handleEditUser: PropTypes.func,
+  handleDeleteUser: PropTypes.func,
+};

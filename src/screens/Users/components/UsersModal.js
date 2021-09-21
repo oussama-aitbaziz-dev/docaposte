@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 import { Box, Modal, Button, Typography, DialogActions } from "@mui/material";
 
 import CustomInput from "../../../components/CustomInput";
@@ -38,7 +39,7 @@ const UsersModal = ({
       // Update users list
       setUsers((prevState) => {
         return prevState.map((user) => {
-          if (user?.id === data?.id) return { ...data };
+          if (user?.id === data?.id) return { id: user.id, ...data };
 
           return user;
         });
@@ -47,7 +48,6 @@ const UsersModal = ({
         `L'utilisateur a été ${isEditMode ? "modifié" : "ajouté"} !`
       );
     } catch (error) {
-      console.log("error.response: ", error.response);
       if (error?.response?.status === 404)
         setSnackbarMsg("Cet utilisateur n'existe pas");
       else
@@ -66,7 +66,6 @@ const UsersModal = ({
     setLoading(true);
     try {
       const response = await api.createUser(data);
-      console.log("response: ", response);
       // Update users list
       setUsers((prevState) => [
         { id: response.data.id, ...data },
@@ -171,3 +170,18 @@ const UsersModal = ({
 };
 
 export default UsersModal;
+
+UsersModal.propTypes = {
+  data: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    firstName: PropTypes.string.isRequired,
+    lastName: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+  }),
+  open: PropTypes.bool,
+  toggleModal: PropTypes.func,
+  setUsers: PropTypes.func,
+  toggleSnackbar: PropTypes.func,
+  setSnackbarMsg: PropTypes.func,
+  isEditMode: PropTypes.bool,
+};

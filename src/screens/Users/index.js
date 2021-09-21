@@ -83,32 +83,38 @@ const Users = () => {
 
   return (
     <Container component="main" maxWidth="md" sx={{ marginTop: "2rem" }}>
-      <DeleteUserDialog
-        data={selectedRowData}
-        open={open}
-        toggleDialog={toggleDialog}
-        setUsers={setUsers}
-        toggleSnackbar={toggleSnackbar}
-        setSnackbarMsg={setSnackbarMsg}
-      />
-      <Snackbar
-        open={showSnackbar}
-        autoHideDuration={3000}
-        onClose={() => {
-          toggleSnackbar();
-          setSnackbarMsg("");
-        }}
-        message={snackbarMsg}
-      />
-      <UsersModal
-        data={selectedRowData}
-        open={openModal}
-        toggleModal={toggleModal}
-        setUsers={setUsers}
-        toggleSnackbar={toggleSnackbar}
-        setSnackbarMsg={setSnackbarMsg}
-        isEditMode={isEditMode}
-      />
+      {/* {Render user related components when required data is available} */}
+      {Object.keys(selectedRowData)?.length ? (
+        <>
+          <DeleteUserDialog
+            data={selectedRowData}
+            open={open}
+            toggleDialog={toggleDialog}
+            setUsers={setUsers}
+            toggleSnackbar={toggleSnackbar}
+            setSnackbarMsg={setSnackbarMsg}
+          />
+          <UsersModal
+            data={selectedRowData}
+            open={openModal}
+            toggleModal={toggleModal}
+            setUsers={setUsers}
+            toggleSnackbar={toggleSnackbar}
+            setSnackbarMsg={setSnackbarMsg}
+            isEditMode={isEditMode}
+          />
+          <Snackbar
+            open={showSnackbar}
+            autoHideDuration={3000}
+            onClose={() => {
+              toggleSnackbar();
+              setSnackbarMsg("");
+            }}
+            message={snackbarMsg}
+          />
+        </>
+      ) : null}
+
       <Button
         variant="text"
         onClick={() => {

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 
 import {
   Button,
@@ -75,3 +76,16 @@ const DeleteUserDialog = ({
 };
 
 export default DeleteUserDialog;
+
+DeleteUserDialog.propTypes = {
+  data: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    firstName: PropTypes.string.isRequired,
+    lastName: PropTypes.string.isRequired,
+  }),
+  open: PropTypes.bool,
+  toggleDialog: PropTypes.func,
+  toggleSnackbar: PropTypes.func,
+  setSnackbarMsg: PropTypes.func,
+  setUsers: PropTypes.func,
+};
