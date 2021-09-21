@@ -1,5 +1,7 @@
-import { TextField } from "@mui/material";
 import React from "react";
+import PropTypes from "prop-types";
+
+import { TextField } from "@mui/material";
 
 const CustomInput = ({ form, type, label }) => {
   return (
@@ -19,3 +21,12 @@ const CustomInput = ({ form, type, label }) => {
 };
 
 export default CustomInput;
+
+CustomInput.propTypes = {
+  form: PropTypes.shape({
+    values: PropTypes.object.isRequired,
+    errors: PropTypes.object.isRequired,
+  }),
+  type: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+};
