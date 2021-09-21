@@ -14,16 +14,22 @@ import DeleteUserDialog from "./components/DeleteUserDialog";
 import api from "../../services";
 import { logout } from "../../utils";
 import UsersTable from "./components/UsersTable";
+import UsersModal from "./components/UsersModal";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isEditMode, setIsEditMode] = useState(false);
 
+  // Holds selected row data
   const [selectedRowData, setSelectedRowData] = useState({});
 
   // Delete User Dialog State
   const [open, setOpen] = useState(false);
+
+  // Users Modal State
+  const [openModal, setOpenModal] = useState(false);
 
   // Snackbar State
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -36,11 +42,19 @@ const Users = () => {
   const toggleSnackbar = () => {
     setShowSnackbar(!showSnackbar);
   };
+  const toggleModal = () => {
+    setOpenModal(!openModal);
+  };
 
-  const handleAddUser = () => {};
+  const handleAddUser = () => {
+    toggleModal();
+    setIsEditMode(false);
+  };
 
   const handleEditUser = (data) => {
     setSelectedRowData(data);
+    setIsEditMode(true);
+    toggleModal();
   };
 
   const handleDeleteUser = (data) => {
@@ -85,6 +99,15 @@ const Users = () => {
           setSnackbarMsg("");
         }}
         message={snackbarMsg}
+      />
+      <UsersModal
+        data={selectedRowData}
+        open={openModal}
+        toggleModal={toggleModal}
+        setUsers={setUsers}
+        toggleSnackbar={toggleSnackbar}
+        setSnackbarMsg={setSnackbarMsg}
+        isEditMode={isEditMode}
       />
       <Button
         variant="text"

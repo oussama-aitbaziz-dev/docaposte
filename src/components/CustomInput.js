@@ -3,20 +3,20 @@ import PropTypes from "prop-types";
 
 import { TextField } from "@mui/material";
 
-const CustomInput = ({ form, type, label }) => {
+const CustomInput = ({ form, type, name, label }) => {
   return (
     <TextField
       margin="normal"
       fullWidth
       id={type}
       label={label}
-      name={type}
+      name={name}
       autoComplete={type}
       type={type}
       onChange={form.handleChange}
-      value={form.values[type]}
-      error={form.errors[type] && form.touched[type]}
-      helperText={form.errors[type] ?? ""}
+      value={form.values[name]}
+      error={form.errors[name] && form.touched[name]}
+      helperText={form.errors[name] ?? ""}
     />
   );
 };
@@ -28,6 +28,7 @@ CustomInput.propTypes = {
     values: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired,
   }),
+  name: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
 };

@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 
-import CustomInput from "./components/CustomInput";
+import CustomInput from "../../components/CustomInput";
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -43,8 +43,13 @@ const Login = () => {
           Connexion
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          <CustomInput form={form} type="email" label="Email" />
-          <CustomInput form={form} type="password" label="Mot de passe" />
+          <CustomInput form={form} name="email" type="email" label="Email" />
+          <CustomInput
+            form={form}
+            name="password"
+            type="password"
+            label="Mot de passe"
+          />
           <FormControlLabel
             control={
               <Checkbox
