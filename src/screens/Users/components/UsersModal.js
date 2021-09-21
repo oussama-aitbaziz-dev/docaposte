@@ -6,6 +6,8 @@ import CustomInput from "../../../components/CustomInput";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
+import api from "../../../services/";
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -26,13 +28,67 @@ const UsersModal = ({
   isEditMode,
 }) => {
   const [loading, setLoading] = useState(false);
+  const { id, firstName, lastName, email } = data;
 
-  const { firstName, lastName, email } = data;
+  // Handlers
+  const handleEdit = async (data) => {
+    setLoading(true);
+    try {
+      await api.updateUser(data);
+      // Update users list
+      setUsers((prevState) => {
+        return prevState.map((user) => {
+          if (user?.id === data?.id) return { ...data };
 
-  const regex = {
-    name: /^[A-za-z\s'-]+$/gim,
+          return user;
+        });
+      });
+      setSnackbarMsg(
+        `L'utilisateur a été ${isEditMode ? "modifié" : "ajouté"} !`
+      );
+    } catch (error) {
+      console.log("error.response: ", error.response);
+      if (error?.response?.status === 404)
+        setSnackbarMsg("Cet utilisateur n'existe pas");
+      else
+        setSnackbarMsg(
+          "Une erreur du serveur est survenue, veuillez réessayer plus tard."
+        );
+    } finally {
+      setLoading(false);
+      form.handleReset();
+      toggleSnackbar();
+      toggleModal();
+    }
   };
 
+  const handleAdd = async (data) => {
+    setLoading(true);
+    try {
+      const response = await api.createUser(data);
+      console.log("response: ", response);
+      // Update users list
+      setUsers((prevState) => [
+        { id: response.data.id, ...data },
+        ...prevState,
+      ]);
+      setSnackbarMsg("L'utilisateur a été ajouté !");
+    } catch (error) {
+      if (error?.response?.status === 409)
+        setSnackbarMsg("Cet utilisateur existe déja");
+      else
+        setSnackbarMsg(
+          "Une erreur du serveur est survenue, veuillez réessayer plus tard."
+        );
+    } finally {
+      setLoading(false);
+      form.handleReset();
+      toggleSnackbar();
+      toggleModal();
+    }
+  };
+
+  // Form
   const form = useFormik({
     initialValues: {
       firstName: isEditMode ? firstName : "",
@@ -41,17 +97,26 @@ const UsersModal = ({
     },
     validationSchema: Yup.object({
       firstName: Yup.string()
-        .matches(regex.name, "Le prénom doit être au bon format")
+        .matches(
+          new RegExp(/^[A-za-z\s'-]+$/gim),
+          "Le prénom doit être au bon format"
+        )
         .required("Champ requis"),
       lastName: Yup.string()
-        .matches(regex.name, "Le Nom doit être au bon format")
+        .matches(
+          new RegExp(/^[A-za-z\s'-]+$/gim),
+          "Le Nom doit être au bon format"
+        )
         .required("Champ requis"),
       email: Yup.string()
         .email("L'adresse email doit être au bon format")
         .required("Champ requis"),
     }),
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+      // alert(JSON.stringify(values, null, 2));
+
+      if (isEditMode) handleEdit({ id, ...values });
+      else handleAdd(values);
     },
     enableReinitialize: true,
   });
@@ -64,7 +129,7 @@ const UsersModal = ({
   };
   return (
     <div>
-      <Modal open={open} onBackdropClick={handleModalClose}>
+      <Modal open={open}>
         <Box sx={style}>
           <Typography component="h1" variant="h5">
             {`${isEditMode ? "Modifier" : "Ajouter"} un utilisateur`}
@@ -92,8 +157,10 @@ const UsersModal = ({
               >
                 Annuler
               </Button>
-              <Button type="submit" variant="contained">
-                {`${isEditMode ? "Modifier" : "Ajouter"}`}
+              <Button type="submit" variant="contained" disabled={loading}>
+                {loading
+                  ? "Chargement..."
+                  : `${isEditMode ? "Modifier" : "Ajouter"}`}
               </Button>
             </DialogActions>
           </Box>

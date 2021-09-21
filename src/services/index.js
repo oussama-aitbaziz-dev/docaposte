@@ -18,12 +18,12 @@ const create = () => {
     return api.get(apiRoutesList.users);
   };
 
-  const createUser = ({ data }) => {
-    return api.post(apiRoutesList.users, { ...data });
+  const createUser = (data) => {
+    return api.post(apiRoutesList.users, data);
   };
 
-  const updateUser = ({ data, id }) => {
-    return api.put(`${apiRoutesList.users}/:${id}`, { ...data });
+  const updateUser = ({ id, ...rest }) => {
+    return api.put(`${apiRoutesList.users}/${id}`, { ...rest });
   };
 
   const deleteUser = ({ id }) => {
